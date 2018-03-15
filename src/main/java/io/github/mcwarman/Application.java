@@ -1,4 +1,4 @@
-package com.adaptris.utils;
+package io.github.mcwarman;
 
 import org.apache.commons.cli.*;
 import org.xml.sax.SAXException;

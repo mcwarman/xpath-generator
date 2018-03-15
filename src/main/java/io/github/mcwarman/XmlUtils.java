@@ -1,4 +1,4 @@
-package com.adaptris.utils;
+package io.github.mcwarman;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

@@ -1,4 +1,4 @@
-package com.adaptris.utils;
+package io.github.mcwarman;
 
 import org.junit.Test;
 
