@@ -1,0 +1,55 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'jacoco'
+
+run.enabled = false
+distTar.enabled=false
+distZip.enabled=false
+
+applicationName = 'xpath-generator'
+version = ''
+
+jar {
+	baseName = 'xpath-generator'
+    version =  version
+    manifest {
+        attributes 'Implementation-Title': 'Interlok Project Migrator',
+                   'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+startScripts {
+    mainClassName = 'com.adaptris.utils.Application'
+}
+
+installDist {
+    destinationDir = new File(project.buildDir, 'staged')
+}
+
+assemble.dependsOn installDist
+
+jacoco {
+  toolVersion="0.7.9"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+check.dependsOn jacocoTestReport
