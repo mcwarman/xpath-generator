@@ -32,7 +32,7 @@ dependencies {
 }
 
 startScripts {
-    mainClassName = 'com.adaptris.utils.Application'
+    mainClassName = 'io.github.mcwarman.Application'
 }
 
 installDist {
