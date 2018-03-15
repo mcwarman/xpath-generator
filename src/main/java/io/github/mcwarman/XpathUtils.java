@@ -77,6 +77,7 @@ public class XpathUtils {
       return "";
     }
     int pos  = 0;
+    int actualPos = 0;
     if(node.getParentNode()!=  null && node.getParentNode().getChildNodes() != null && node.getParentNode().getChildNodes().getLength() > 1){
       for (int i = 0; i < node.getParentNode().getChildNodes().getLength(); i++) {
         Node child = node.getParentNode().getChildNodes().item(i);
@@ -84,11 +85,17 @@ public class XpathUtils {
           if (child.getNodeName().equals(node.getNodeName())){
             pos++;
           }
+          if (child == node){
+            actualPos = pos;
+          }
         }
+      }
+      if (pos == 1) {
+        actualPos = 0;
       }
     }
     return generateXPath(parent) + "/" +(node instanceof Attr ? "@" : "" ) + node.getNodeName() +
-        (pos > 1 ? String.format("[%s]", pos) : "");
+        (actualPos > 0 ? String.format("[%s]", actualPos) : "");
   }
 
 }

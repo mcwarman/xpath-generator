@@ -26,4 +26,13 @@ public class XpathUtilsTest {
     assertEquals("/foo/foo1/@hello", s.get(0));
   }
 
+  @Test
+  public void getXPathWithPosition() throws Exception {
+    List<String> s = XpathUtils.getXpaths("<master_data><record><type>0</type></record><record><type>0</type></record><record><type>1</type></record></master_data>");
+    assertEquals(3, s.size());
+    assertEquals("/master_data/record[1]/type", s.get(0));
+    assertEquals("/master_data/record[2]/type", s.get(1));
+    assertEquals("/master_data/record[3]/type", s.get(2));
+  }
+
 }
