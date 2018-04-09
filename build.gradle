@@ -13,7 +13,7 @@ jar {
 	baseName = 'xpath-generator'
     version =  version
     manifest {
-        attributes 'Implementation-Title': 'Interlok Project Migrator',
+        attributes 'Implementation-Title': 'Xpath Generator',
                    'Implementation-Version': version
     }
 }
