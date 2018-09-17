@@ -10,7 +10,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author mwarman
@@ -21,7 +23,12 @@ public class XpathUtils {
   }
 
   public static List<String> getXpaths(String file) throws ParserConfigurationException, IOException, SAXException {
+    return getXpaths(file, new HashMap<>());
+  }
+
+  public static List<String> getXpaths(String file, Map<String, String> nsPrefixMapping) throws ParserConfigurationException, IOException, SAXException {
     DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+    docBuilderFactory.setNamespaceAware(true);
     DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
     Document document = docBuilder.parse(new ByteArrayInputStream((file).getBytes()));
     List<Node> nodes = new ArrayList<>();
@@ -34,7 +41,7 @@ public class XpathUtils {
     }
     List<String> xpaths = new ArrayList<>();
     for (Node node : nodes){
-      xpaths.add(generateXPath(node));
+      xpaths.add(generateXPath(node, nsPrefixMapping));
     }
     return xpaths;
   }
@@ -65,7 +72,10 @@ public class XpathUtils {
 
 
 
-  private static String generateXPath(Node node){
+  private static String generateXPath(Node node, Map<String, String> nsPrefixMapping){
+    if(nsPrefixMapping.containsKey(node.getNamespaceURI())){
+      node.setPrefix(nsPrefixMapping.get(node.getNamespaceURI()));
+    }
     Node parent;
     if(node instanceof Attr){
       parent = ((Attr)node).getOwnerElement();
@@ -94,7 +104,7 @@ public class XpathUtils {
         actualPos = 0;
       }
     }
-    return generateXPath(parent) + "/" +(node instanceof Attr ? "@" : "" ) + node.getNodeName() +
+    return generateXPath(parent, nsPrefixMapping) + "/" +(node instanceof Attr ? "@" : "" ) + node.getNodeName() +
         (actualPos > 0 ? String.format("[%s]", actualPos) : "");
   }
 

@@ -2,9 +2,10 @@ package io.github.mcwarman;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -34,5 +35,24 @@ public class XpathUtilsTest {
     assertEquals("/master_data/record[2]/type", s.get(1));
     assertEquals("/master_data/record[3]/type", s.get(2));
   }
+
+  @Test
+  public void getXPathWithNameSpace() throws Exception {
+    List<String> s = XpathUtils.getXpaths("<foo xmlns=\"https://warman.io/DoesNotExist.xsd\"><foo1>Foo Test 1</foo1><services><another1><unique-id>value</unique-id><test1>Foo Test 2.0</test1><test1>${data}</test1></another1></services><foo3>Foo Test 3</foo3><foo4>Foo Test 4</foo4></foo>");
+    assertEquals(6, s.size());
+    assertEquals("/foo/foo1", s.get(0));
+  }
+
+
+  @Test
+  public void getXPathWithNameSpaceWithNamedPrefix() throws Exception {
+    Map<String, String> ns = Collections.singletonMap("https://warman.io/DoesNotExist.xsd", "ns");
+    List<String> s = XpathUtils.getXpaths(
+        "<foo xmlns=\"https://warman.io/DoesNotExist.xsd\"><foo1>Foo Test 1</foo1><services><another1><unique-id>value</unique-id><test1>Foo Test 2.0</test1><test1>${data}</test1></another1></services><foo3>Foo Test 3</foo3><foo4>Foo Test 4</foo4></foo>"
+        ,ns);
+    assertEquals(6, s.size());
+    assertEquals("/ns:foo/ns:foo1", s.get(0));
+  }
+
 
 }

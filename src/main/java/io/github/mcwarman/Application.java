@@ -10,6 +10,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * @author mwarman
@@ -20,13 +24,18 @@ public class Application {
 
   private String file;
 
+  private Properties nsMapping;
+
   private static final String HELP_ARG = "help";
   private static final String FILE_ARG = "file";
+  private static final String NS_ARGS = "namespace";
 
   Application(){
+    nsMapping = new Properties();
     options = new Options();
-    options.addOption("h",HELP_ARG, false, "Displays this.." );
+    options.addOption("h", HELP_ARG, false, "Displays this.." );
     options.addRequiredOption("f", FILE_ARG, true, "(required) The file");
+    options.addOption(Option.builder("n").argName("uri=prefix").longOpt(NS_ARGS).numberOfArgs(2).valueSeparator().desc("Namespace URI to prefix mapping" ).build());
   }
 
   public static void main(String[] args) throws Exception {
@@ -36,7 +45,7 @@ public class Application {
 
   void run(String[] args) throws ParserConfigurationException, SAXException, TransformerException, IOException {
     arguments(args);
-    run(file);
+    run(file, nsMapping);
   }
 
   void arguments(String[] args){
@@ -46,6 +55,9 @@ public class Application {
       if(line.hasOption(HELP_ARG)){
         usage();
       }
+      if(line.hasOption(NS_ARGS)){
+        nsMapping = line.getOptionProperties(NS_ARGS);
+      }
       file = line.getOptionValue(FILE_ARG);
     } catch (ParseException e) {
       System.err.println("Parsing failed.  Reason: " + e.getMessage());
@@ -53,9 +65,12 @@ public class Application {
     }
   }
 
-  void run(String filePath) throws IOException, ParserConfigurationException, SAXException, TransformerException {
+  void run(String filePath, Properties nsMapping) throws IOException, ParserConfigurationException, SAXException, TransformerException {
     String xml = XmlUtils.resolveXincludes(readFile(filePath, StandardCharsets.UTF_8));
-    for (String s : XpathUtils.getXpaths(xml)){
+    Map<String, String> map = nsMapping.entrySet().stream().collect(Collectors.toMap(
+        e -> String.valueOf(e.getKey()),
+        e -> String.valueOf(e.getValue())));
+    for (String s : XpathUtils.getXpaths(xml, map)){
       System.out.println(s);
     }
   }
