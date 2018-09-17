@@ -54,5 +54,13 @@ public class XpathUtilsTest {
     assertEquals("/ns:foo/ns:foo1", s.get(0));
   }
 
+  @Test
+  public void getXPathWithEmptyNode() throws Exception {
+    List<String> s = XpathUtils.getXpaths(
+        "<foo ><foo1/><foo2>Foo Test 1</foo2></foo>");
+    assertEquals(2, s.size());
+    assertEquals("/foo/foo1", s.get(0));
+  }
+
 
 }

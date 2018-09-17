@@ -65,6 +65,8 @@ public class XpathUtils {
         if (result != null) {
           return result;
         }
+      } else if (node instanceof Element  && node.getChildNodes().getLength() == 0 && !foundNodes.contains(node)) {
+        return node;
       }
     }
     return null;
